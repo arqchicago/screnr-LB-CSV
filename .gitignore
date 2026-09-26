@@ -1,0 +1,9 @@
+*.xlsx
+*.csv
+*.DS_Store
+*.pkl
+*.log
+*.png
+
+__pycache__/
+.vscode/
