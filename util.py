@@ -1,5 +1,8 @@
 from dataclasses import dataclass
 import math
+import matplotlib.pyplot as plt
+import pandas as pd
+
 
 @dataclass
 class ExerciseConfig:
@@ -46,17 +49,17 @@ def calc_3d_angle(a: list, b: list, c: list) -> float:
     if norm_ba == 0.0 or norm_bc == 0.0:
         return 180.0
 
-    # 3. Compute dot product
+    # Compute dot product
     dot_product = (ba_x * bc_x) + (ba_y * bc_y) + (ba_z * bc_z)
 
-    # 4. Compute cosine and clip manually to [-1.0, 1.0] to avoid acos domain errors
+    # Compute cosine and clip manually to [-1.0, 1.0] to avoid acos domain errors
     cosine_angle = dot_product / (norm_ba * norm_bc)
     if cosine_angle > 1.0:
         cosine_angle = 1.0
     elif cosine_angle < -1.0:
         cosine_angle = -1.0
 
-    # 5. Convert angle from radians to degrees
+    # Convert angle from radians to degrees
     angle_radians = math.acos(cosine_angle)
     angle_degrees = angle_radians * (180.0 / math.pi)
 
@@ -67,11 +70,11 @@ def calc_2d_angle(a: list, b: list, c: list) -> float:
     """
     Calculates the 2D angle in degrees at vertex b formed by points a, b, and c
     """
-    # 1. Compute 2D vector components ba and bc
+    # Compute 2D vector components ba and bc
     ba_x, ba_y = a[0] - b[0], a[1] - b[1]
     bc_x, bc_y = c[0] - b[0], c[1] - b[1]
 
-    # 2. Compute 2D vector magnitudes (Euclidean norm)
+    # Compute 2D vector magnitudes (Euclidean norm)
     norm_ba = math.sqrt(ba_x * ba_x + ba_y * ba_y)
     norm_bc = math.sqrt(bc_x * bc_x + bc_y * bc_y)
 
@@ -79,21 +82,45 @@ def calc_2d_angle(a: list, b: list, c: list) -> float:
     if norm_ba == 0.0 or norm_bc == 0.0:
         return 180.0
 
-    # 3. Compute 2D dot product
+    # Compute 2D dot product
     dot_product = (ba_x * bc_x) + (ba_y * bc_y)
 
-    # 4. Compute cosine and clip manually to [-1.0, 1.0] to avoid acos domain errors
+    # Compute cosine and clip manually to [-1.0, 1.0] to avoid acos domain errors
     cosine_angle = dot_product / (norm_ba * norm_bc)
     if cosine_angle > 1.0:
         cosine_angle = 1.0
     elif cosine_angle < -1.0:
         cosine_angle = -1.0
 
-    # 5. Convert angle from radians to degrees
+    # Convert angle from radians to degrees
     angle_radians = math.acos(cosine_angle)
     angle_degrees = angle_radians * (180.0 / math.pi)
 
     return round(angle_degrees, 4)
+
+
+def plot_data(df: pd.DataFrame, columns: list[str], title: str = "Angle", filename: str = "plot.png") -> int:
+    """Plots rows of a DataFrame as overlaid line charts across specified columns."""
+    color_list = ["Red", "Blue", "Green", "Orange", "Purple", "Brown", "Teal", "Gold", "Tomato", "Slate gray"]
+    plt.figure(figsize=(12, 6))
+        
+    # Plot both lines against idx
+    i = 0
+    for col in columns:
+        plt.plot(df['idx'], df[col], label=col, color=color_list[i])
+        i += 1
+
+    # Customization
+    plt.title(title)
+    plt.xlabel("frame")
+    plt.ylabel("Angle Values")
+    plt.legend()
+    plt.grid(True, linestyle='--', alpha=0.5)
+    plt.ylim(0, 200)
+
+    plt.tight_layout()
+    plt.savefig(filename)
+    return 1
 
 
 if __name__ == "__main__":
